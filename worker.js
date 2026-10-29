@@ -122,7 +122,7 @@ async function handleMessage(update, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (request.method === "GET" && url.pathname === "/") {
@@ -151,8 +151,8 @@ export default {
     const task = handleMessage(update, env).catch((error) => {
       console.error("Update handler failed:", String(error).slice(0, 300));
     });
-    if (typeof globalThis.waitUntil === "function") {
-      globalThis.waitUntil(task);
+    if (ctx && typeof ctx.waitUntil === "function") {
+      ctx.waitUntil(task);
     } else {
       await task;
     }
